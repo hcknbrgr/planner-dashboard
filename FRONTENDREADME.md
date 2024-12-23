@@ -1,11 +1,13 @@
 # 360 Planner
+
 This project is for an AI based task organizer
 
 ### Setting up the frontend environment
-* `https://dev.to/koladev/building-a-fullstack-application-with-django-django-rest-nextjs-3e26`
-* Ensure node.js and npm are installed using a version manager
-* Currently we are using `node 23.3.0`
-* We are using Nextjs 15.1.1 for the frontend. In the root directory:
+
+- `https://dev.to/koladev/building-a-fullstack-application-with-django-django-rest-nextjs-3e26`
+- Ensure node.js and npm are installed using a version manager
+- Currently we are using `node 23.3.0`
+- We are using Nextjs 15.1.1 for the frontend. In the root directory:
 
 ```npx create-next-app@latest
 
@@ -22,9 +24,45 @@ Ok to proceed? (y) y
 √ Would you like to customize the import alias (`@/*` by default)? ... No / Yes
 ```
 
-* Other packages -- maybe, not yet?:
-    * `npm install axios@0.21.1`
+- Other packages -- maybe, not yet?:
+  - `npm install axios@0.21.1`
 
 ### Starting the project -- Frontend
-* Navigate to the `180Scheduler\scheduler-react\frontend` directory
-* Run `npm start` to begin the frontend server
+
+- Navigate to the `180Scheduler\scheduler-react\frontend` directory
+- Run `npm start` to begin the frontend server
+
+#### Git Hooks
+
+- Husky
+  - `npm install --save-dev husky lint-staged`
+  - `npx husky init`
+
+#### Linters
+
+- CSS:
+  - Install stylelint and initialize (https://stylelint.io/):
+    - `npm init stylelint`
+  - Run stylelint:
+    - `npx stylelint "**/*.scss"`
+- Javascript
+  - Install eslint and: \*`npm init @eslint/config@latest`
+
+````
+√ How would you like to use ESLint? · problems
+√ What type of modules does your project use? · esm
+√ Which framework does your project use? · react
+√ Does your project use TypeScript? · typescript
+√ Where does your code run? · browser, node
+The config that you've selected requires the following dependencies:
+
+eslint, globals, @eslint/js, typescript-eslint, eslint-plugin-react
+√ Would you like to install them now? · No / Yes
+√ Which package manager do you want to use? · npm```
+* Code Formatter:
+    * Prettier
+        *`npm install --save-dev --save-exact prettier`
+        *`npm install --save-dev eslint-config-prettier`
+
+
+````
