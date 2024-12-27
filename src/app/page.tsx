@@ -1,95 +1,121 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+"use client";
 
-export default function Home() {
+import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+
+async function deleteMenu(id) {
+  const res = await fetch(`http://127.0.0.1:8000/api/menu/${id}/`, {
+    method: "DELETE",
+  });
+  if (!res.ok) {
+    throw new Error("Failed to retrieve");
+  }
+  return Promise.resolve();
+}
+
+async function getData() {
+  const res = await fetch("http://127.0.0.1:8000/api/menu/");
+  if (!res.ok) {
+    throw new Error("Failed to fetch data");
+  }
+  return res.json();
+}
+
+const TodoItem = ({ id, title, description, onEdit, onDelete }) => {
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>src/app/page.tsx</code>.
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <div className="todo-item" data-id={id}>
+      <div className="todo-item-info">
+        <div className="todo-item-title">{title}</div>
+        <div className="todo-item-description">{description}</div>
+      </div>
+      <div className="todo-item-actions">
+        <button className="edit-button" onClick={onEdit}>
+          Edit
+        </button>
+        <button
+          className="delete-button"
+          onClick={() => {
+            deleteMenu(id).then(() => onDelete(id));
+          }}
+        >
+          Delete
+        </button>
+      </div>
+    </div>
+  );
+};
 
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+export default function Page() {
+  const [todoItems, setMenuItems] = useState(null);
+  const router = useRouter();
+  const params = useSearchParams();
+
+  // State for displaying a success message
+  const [displaySuccessMessage, setDisplaySuccessMessage] = useState({
+    show: false,
+    type: "", // either 'add' or 'update'
+  });
+
+  // Fetch menu items on component mount
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await getData();
+      setMenuItems(data);
+    };
+    fetchData().catch(console.error);
+  }, []);
+
+  // Detect changes in URL parameters for success messages
+  useEffect(() => {
+    if (!!params.get("action")) {
+      setDisplaySuccessMessage({
+        type: params.get("action"),
+        show: true,
+      });
+      router.replace("/");
+    }
+  }, [params, router]);
+
+  // Automatically hide the success message after 3 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (displaySuccessMessage.show) {
+        setDisplaySuccessMessage({ show: false, type: "" });
+      }
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, [displaySuccessMessage.show]);
+
+  // Handle deletion of a menu item
+  const handleDelete = (id) => {
+    setMenuItems((items) => items.filter((item) => item.id !== id));
+  };
+
+  return (
+    <div>
+      <button className="add-button" onClick={() => router.push("/add")}>
+        Add
+      </button>
+      {displaySuccessMessage.show && (
+        <p className="success-message">
+          {displaySuccessMessage.type === "add" ? "Added a" : "Modified a"} menu
+          item.
+        </p>
+      )}
+      {todoItems ? (
+        todoItems.map((item) => (
+          <TodoItem
+            key={item.id}
+            id={item.id}
+            title={item.title}
+            description={item.description}
+            onEdit={() => router.push(`/update/${item.id}`)}
+            onDelete={handleDelete}
           />
-          Learn
-        </a>
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+        ))
+      ) : (
+        <p>Loading...</p>
+      )}
     </div>
   );
 }
