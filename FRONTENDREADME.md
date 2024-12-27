@@ -29,8 +29,8 @@ Ok to proceed? (y) y
 
 ### Starting the project -- Frontend
 
-- Navigate to the `180Scheduler\scheduler-react\frontend` directory
-- Run `npm start` to begin the frontend server
+- Navigate to the `` directory
+- Run `npm run dev` to begin the frontend server in developer mode
 
 #### Git Hooks
 
