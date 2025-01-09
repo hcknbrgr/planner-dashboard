@@ -12,7 +12,7 @@ interface TodoItemProps {
 }
 
 async function deleteMenu(id: number): Promise<void> {
-  const res = await fetch(`http://127.0.0.1:8000/api/menu/${id}/`, {
+  const res = await fetch(`http://127.0.0.1:8000/api/todos/${id}/`, {
     method: "DELETE",
   });
   if (!res.ok) {
@@ -21,7 +21,7 @@ async function deleteMenu(id: number): Promise<void> {
 }
 
 async function getData() {
-  const res = await fetch("http://127.0.0.1:8000/api/menu/");
+  const res = await fetch("http://127.0.0.1:8000/api/todos/");
   if (!res.ok) {
     throw new Error("Failed to fetch data");
   }
