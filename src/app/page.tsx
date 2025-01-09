@@ -49,7 +49,9 @@ const TodoItem = ({
       <div className="todo-item-info">
         <div className="todo-item-title">{title}</div>
         <div className="todo-item-description">{description}</div>
-        <div className="todo-item-completed">{completed}</div>
+        <div className="todo-item-completed">
+          Completed: {completed ? "Yes" : "No"}
+        </div>
       </div>
       <div className="todo-item-actions">
         <button className="edit-button" onClick={() => onEdit(id)}>
