@@ -7,8 +7,16 @@ interface TodoItemProps {
   id: number;
   title: string;
   description: string;
+  completed: boolean;
   onEdit: (id: number) => void;
   onDelete: (id: number) => void;
+}
+
+interface TodoItemData {
+  id: number;
+  title: string;
+  description: string;
+  completed: boolean;
 }
 
 async function deleteMenu(id: number): Promise<void> {
@@ -32,6 +40,7 @@ const TodoItem = ({
   id,
   title,
   description,
+  completed,
   onEdit,
   onDelete,
 }: TodoItemProps) => {
@@ -40,6 +49,7 @@ const TodoItem = ({
       <div className="todo-item-info">
         <div className="todo-item-title">{title}</div>
         <div className="todo-item-description">{description}</div>
+        <div className="todo-item-complted">{completed}</div>
       </div>
       <div className="todo-item-actions">
         <button className="edit-button" onClick={() => onEdit(id)}>
@@ -100,7 +110,7 @@ export default function Page() {
   }, [displaySuccessMessage.show]);
 
   // Handle deletion of a menu item
-  const handleDelete = (id) => {
+  const handleDelete = (id: number) => {
     setMenuItems((items) => items.filter((item) => item.id !== id));
   };
 
@@ -121,6 +131,7 @@ export default function Page() {
             key={item.id}
             id={item.id}
             title={item.title}
+            completed={item.completed}
             description={item.description}
             onEdit={() => router.push(`/update/${item.id}`)}
             onDelete={handleDelete}
