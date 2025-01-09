@@ -49,7 +49,7 @@ const TodoItem = ({
       <div className="todo-item-info">
         <div className="todo-item-title">{title}</div>
         <div className="todo-item-description">{description}</div>
-        <div className="todo-item-complted">{completed}</div>
+        <div className="todo-item-completed">{completed}</div>
       </div>
       <div className="todo-item-actions">
         <button className="edit-button" onClick={() => onEdit(id)}>
@@ -69,7 +69,7 @@ const TodoItem = ({
 };
 
 export default function Page() {
-  const [todoItems, setMenuItems] = useState(null);
+  const [todoItems, setMenuItems] = useState<TodoItemData[] | null>(null);
   const router = useRouter();
   const params = useSearchParams();
 
@@ -111,7 +111,7 @@ export default function Page() {
 
   // Handle deletion of a menu item
   const handleDelete = (id: number) => {
-    setMenuItems((items) => items.filter((item) => item.id !== id));
+    setMenuItems((items) => items?.filter((item) => item.id !== id) || null);
   };
 
   return (
