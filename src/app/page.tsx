@@ -3,14 +3,21 @@
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
-async function deleteMenu(id) {
+interface TodoItemProps {
+  id: number;
+  title: string;
+  description: string;
+  onEdit: (id: number) => void;
+  onDelete: (id: number) => void;
+}
+
+async function deleteMenu(id: number): Promise<void> {
   const res = await fetch(`http://127.0.0.1:8000/api/menu/${id}/`, {
     method: "DELETE",
   });
   if (!res.ok) {
     throw new Error("Failed to retrieve");
   }
-  return Promise.resolve();
 }
 
 async function getData() {
@@ -21,7 +28,13 @@ async function getData() {
   return res.json();
 }
 
-const TodoItem = ({ id, title, description, onEdit, onDelete }) => {
+const TodoItem = ({
+  id,
+  title,
+  description,
+  onEdit,
+  onDelete,
+}: TodoItemProps) => {
   return (
     <div className="todo-item" data-id={id}>
       <div className="todo-item-info">
@@ -29,7 +42,7 @@ const TodoItem = ({ id, title, description, onEdit, onDelete }) => {
         <div className="todo-item-description">{description}</div>
       </div>
       <div className="todo-item-actions">
-        <button className="edit-button" onClick={onEdit}>
+        <button className="edit-button" onClick={() => onEdit(id)}>
           Edit
         </button>
         <button
