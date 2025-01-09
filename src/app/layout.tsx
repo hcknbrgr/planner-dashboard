@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Geist, Geist_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./style.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -9,7 +9,11 @@ export const metadata: Metadata = {
   description: "A simple UI to assist with todo lists",
 };
 
-export default function RootLayout({ children }) {
+interface RootLayoutProps {
+  children: React.ReactNode;
+}
+
+export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en">
       <body className={inter.className}>
