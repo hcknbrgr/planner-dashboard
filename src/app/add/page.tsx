@@ -1,14 +1,20 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+
+interface TodoItemData {
+  id?: number;
+  title: string;
+  description: string;
+}
 
 /**
  * Sends a POST request to create a new todo list item.
  * @param {Object} data Thetodo item data to be sent.
  */
 
-async function createTodo(data) {
+async function createTodo(data: TodoItemData): Promise<void> {
   const res = await fetch("http://127.0.0.1:8000/api/todos/", {
     method: "POST",
     headers: {
@@ -26,17 +32,21 @@ async function createTodo(data) {
 
 const Page = () => {
   const router = useRouter();
-  const [formData, setFormData] = useState({ title: "", description: "" });
+  const [formData, setFormData] = useState<TodoItemData>({
+    title: "",
+    description: "",
+  });
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   /*
    * Handles the form submission.
    * @param {Event} event The form submission event.
    */
-  const onFinish = (event) => {
+  const onFinish = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsLoading(true);
+
     createTodo(formData)
       .then(() => {
         // Navigate to the main page with a query parameter indicating success
