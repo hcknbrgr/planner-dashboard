@@ -1,13 +1,24 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+
+interface TodoItemData {
+  title: string;
+  description: string;
+}
+
+interface PageProps {
+  params: {
+    todoId: number; // Ensure this matches the type of the ID being passed
+  };
+}
 
 /**
  * Fetches a todo list item by ID
  * @param {number} id The ID of the todo list item to retrieve.
  */
-async function getTodo(id) {
+async function getTodo(id: number) {
   const res = await fetch(`http://127.0.0.1:8000/api/todos/${id}/`);
   if (!res.ok) {
     throw new Error("Failed to retrieve todo list item");
@@ -20,7 +31,10 @@ async function getTodo(id) {
  * @param {number} id The ID of the todo list item to update.
  * @param {Object} data The udpated data for the todo list item.
  */
-async function updateTodo(id, data) {
+async function updateTodo(
+  id: number,
+  data: TodoItemData,
+): Promise<TodoItemData> {
   const res = await fetch(`http://127.0.0.1:8000/api/todos/${id}/`, {
     method: "PUT",
     headers: {
@@ -35,19 +49,23 @@ async function updateTodo(id, data) {
   return res.json();
 }
 
-const Page = ({ params }) => {
+const Page = ({ params }: PageProps) => {
   const router = useRouter();
-  const [formData, setFormData] = useState({ title: "", description: "" });
+  const [formData, setFormData] = useState<TodoItemData>({
+    title: "",
+    description: "",
+  });
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   /**
    * Handles form submission.
    * @param {Event} event The form submission event.
    */
-  const onFinish = (event) => {
+  const onFinish = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsLoading(true);
+    setError(null);
     updateTodo(params.todoId, formData)
       .then(() => {
         router.replace("/?action=update");
@@ -69,7 +87,7 @@ const Page = ({ params }) => {
       try {
         const data = await getTodo(params.todoId);
         setFormData({ title: data.title, description: data.description });
-      } catch (error) {
+      } catch (error: any) {
         setError(error.message);
       }
     };
