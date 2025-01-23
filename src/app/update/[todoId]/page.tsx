@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, use, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 interface TodoItemData {
@@ -9,9 +9,7 @@ interface TodoItemData {
 }
 
 interface PageProps {
-  params: {
-    todoId: number; // Ensure this matches the type of the ID being passed
-  };
+  params: Promise<{ todoId: number }>; // Ensure this matches the type of the ID being passed
 }
 
 /**
@@ -57,6 +55,7 @@ const Page = ({ params }: PageProps) => {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { todoId } = use(params);
 
   /**
    * Handles form submission.
@@ -66,7 +65,7 @@ const Page = ({ params }: PageProps) => {
     event.preventDefault();
     setIsLoading(true);
     setError(null);
-    updateTodo(params.todoId, formData)
+    updateTodo(todoId, formData)
       .then(() => {
         router.replace("/?action=update");
       })
@@ -85,14 +84,14 @@ const Page = ({ params }: PageProps) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await getTodo(params.todoId);
+        const data = await getTodo(todoId);
         setFormData({ title: data.title, description: data.description });
       } catch (error: any) {
         setError(error.message);
       }
     };
     fetchData();
-  }, [params.todoId]);
+  }, [todoId]);
 
   return (
     <form onSubmit={onFinish}>
