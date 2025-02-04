@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 interface TodoItemData {
   title: string;
   description: string;
+  completed: boolean;
 }
 
 interface PageProps {
@@ -52,6 +53,7 @@ const Page = ({ params }: PageProps) => {
   const [formData, setFormData] = useState<TodoItemData>({
     title: "",
     description: "",
+    completed: false,
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -85,7 +87,11 @@ const Page = ({ params }: PageProps) => {
     const fetchData = async () => {
       try {
         const data = await getTodo(todoId);
-        setFormData({ title: data.title, description: data.description });
+        setFormData({
+          title: data.title,
+          description: data.description,
+          completed: data.completed,
+        });
       } catch (error: any) {
         setError(error.message);
       }
@@ -112,6 +118,18 @@ const Page = ({ params }: PageProps) => {
           value={formData.description}
           onChange={(e) =>
             setFormData({ ...formData, description: e.target.value })
+          }
+        />
+      </div>
+      <div className="radioGroup">
+        <label htmlFor="completed">Completed</label>
+        <input
+          type="checkbox"
+          name="completed"
+          value="completed"
+          checked={formData.completed}
+          onChange={(e) =>
+            setFormData({ ...formData, completed: e.target.checked })
           }
         />
       </div>
