@@ -4,13 +4,13 @@ This project is for an AI assisted task decomposition system.
 
 ### Setting up the frontend environment
 
-- Ensure node.js and npm are installed using a version manager
+- Ensure node.js (nodejs.org) and npm are installed using a version manager (nvm)
 - Currently we are using `node 23.3.0`
 - We are using Nextjs 15.1.1 for the frontend. In the root directory:
 
 ```npx create-next-app@latest
 
-create-next-app@15.1.1
+create-next-app@15.2.0
 Ok to proceed? (y) y
 
 √ What is your project named? ... planner-dashboard
@@ -62,3 +62,8 @@ eslint, globals, @eslint/js, typescript-eslint, eslint-plugin-react
 
 
 ````
+
+### TDD
+
+- Install Jest: `npm install --save-dev jest`
+- To run Jest: `npm jest`
