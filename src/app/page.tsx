@@ -92,9 +92,11 @@ export default function Page() {
 
   // Detect changes in URL parameters for success messages
   useEffect(() => {
-    if (!!params.get("action")) {
+    const actionType = params.get("action") || "";
+
+    if (!!actionType) {
       setDisplaySuccessMessage({
-        type: params.get("action"),
+        type: actionType,
         show: true,
       });
       router.replace("/");
@@ -113,7 +115,7 @@ export default function Page() {
 
   // Handle deletion of a menu item
   const handleDelete = (id: number) => {
-    setMenuItems((items) => items?.filter((item) => item.id !== id) || null);
+    setMenuItems((items) => items?.filter((item) => item.id !== id) ?? null);
   };
 
   return (
