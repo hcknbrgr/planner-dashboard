@@ -105,6 +105,7 @@ const Page = ({ params }: PageProps) => {
         <label htmlFor="title">Title</label>
         <input
           required
+          id="title"
           name="title"
           value={formData.title}
           onChange={(e) => setFormData({ ...formData, title: e.target.value })}
@@ -114,6 +115,7 @@ const Page = ({ params }: PageProps) => {
         <label htmlFor="description">Description</label>
         <input
           required
+          id="description"
           name="description"
           value={formData.description}
           onChange={(e) =>
@@ -126,6 +128,7 @@ const Page = ({ params }: PageProps) => {
         <input
           type="checkbox"
           name="completed"
+          id="completed"
           value="completed"
           checked={formData.completed}
           onChange={(e) =>
