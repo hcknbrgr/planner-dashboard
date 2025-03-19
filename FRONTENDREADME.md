@@ -65,5 +65,15 @@ eslint, globals, @eslint/js, typescript-eslint, eslint-plugin-react
 
 ### TDD
 
-- Install Jest: `npm install --save-dev jest`
+- Install Jest: `npm install -D jest jest-environment-jsdom @testing-library/react @testing-library/dom @testing-library/jest-dom ts-node`
+- Generate a basic Jest Config file: `npm init jest@latest`
 - To run Jest: `npm jest`
+
+```The following questions will help Jest to create a suitable configuration for your project
+
+√ Would you like to use Typescript for the configuration file? ... yes
+√ Choose the test environment that will be used for testing » node
+√ Do you want Jest to add coverage reports? ... yes
+√ Which provider should be used to instrument code for coverage? » babel ***change this to v8***
+√ Automatically clear mock calls, instances, contexts and results before every test? ... yes
+```
