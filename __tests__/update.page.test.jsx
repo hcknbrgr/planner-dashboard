@@ -28,17 +28,25 @@ describe("Todo Page", () => {
     expect(screen.getByText(/submit/i)).toBeInTheDocument();
   });
 
-  //   it("fetches and displays todo data", async () => {
-  //     fetch.mockResolvedValueOnce({
-  //       ok: true,
-  //       json: async () => ({ title: "Test Todo", description: "Test Desc", completed: false }),
-  //     });
+  it("fetches and displays todo data", async () => {
+    fetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({
+        title: "Test Todo",
+        description: "Test Desc",
+        completed: false,
+      }),
+    });
 
-  //     render(<Page params={Promise.resolve({ todoId: 1 })} />);
+    await act(async () => {
+      render(<Page params={Promise.resolve({ todoId: 1 })} />);
+    });
 
-  //     await waitFor(() => expect(screen.getByDisplayValue("Test Todo")).toBeInTheDocument());
-  //     expect(screen.getByDisplayValue("Test Desc")).toBeInTheDocument();
-  //   });
+    await waitFor(() =>
+      expect(screen.getByDisplayValue("Test Todo")).toBeInTheDocument(),
+    );
+    expect(screen.getByDisplayValue("Test Desc")).toBeInTheDocument();
+  });
 
   //   it("handles form submission successfully", async () => {
   //     fetch.mockResolvedValueOnce({
