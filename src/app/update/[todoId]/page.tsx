@@ -34,7 +34,6 @@ async function updateTodo(
   id: number,
   data: TodoItemData,
 ): Promise<TodoItemData> {
-  console.log("I made it here");
   const res = await fetch(`http://127.0.0.1:8000/api/todos/${id}/`, {
     method: "PUT",
     headers: {
@@ -42,11 +41,8 @@ async function updateTodo(
     },
     body: JSON.stringify(data),
   });
-  console.log("I made it here2");
-  console.log(res);
 
   if (!res.ok) {
-    console.log("This is trash");
     throw new Error("Failed to update todo list item");
   }
   return res.json();
@@ -81,18 +77,15 @@ const Page = ({ params }: PageProps) => {
    * @param {Event} event The form submission event.
    */
   const onFinish = (event: FormEvent<HTMLFormElement>) => {
-    console.log("🛠 Fetching:", todoId, formData);
     event.preventDefault();
     setIsLoading(true);
     setError(null);
     if (todoId != null) {
       updateTodo(todoId, formData)
         .then(() => {
-          console.log("Navigating to: /?action=update");
           router.replace("/?action=update");
         })
         .catch((error) => {
-          console.log(error);
           setError("An error occurred");
           setIsLoading(false);
         });
