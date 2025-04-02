@@ -88,7 +88,6 @@ describe("Todo Page", () => {
     });
     fireEvent.click(screen.getByLabelText(/completed/i));
     user.click(screen.getByRole("button", { name: /submit/i }));
-    // fireEvent.submit(screen.getByRole("form"));
 
     await waitFor(() =>
       expect(mockRouter.replace).toHaveBeenCalledWith("/?action=update"),
@@ -96,11 +95,13 @@ describe("Todo Page", () => {
     console.log("Router calls:", mockRouter.replace.mock.calls);
   });
 
-  //   it("handles API errors gracefully", async () => {
-  //     fetch.mockRejectedValueOnce(new Error("Failed to fetch"));
+  it("handles API errors gracefully", async () => {
+    fetch.mockRejectedValueOnce(new Error("Failed to fetch"));
 
-  //     render(<Page params={Promise.resolve({ todoId: 1 })} />);
+    render(<Page params={Promise.resolve({ todoId: 1 })} />);
 
-  //     await waitFor(() => expect(screen.getByText(/failed to fetch/i)).toBeInTheDocument());
-  //   });
+    await waitFor(() =>
+      expect(screen.getByText(/failed to fetch/i)).toBeInTheDocument(),
+    );
+  });
 });
