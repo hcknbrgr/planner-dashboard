@@ -34,6 +34,7 @@ async function updateTodo(
   id: number,
   data: TodoItemData,
 ): Promise<TodoItemData> {
+  console.log("I made it here");
   const res = await fetch(`http://127.0.0.1:8000/api/todos/${id}/`, {
     method: "PUT",
     headers: {
@@ -41,8 +42,11 @@ async function updateTodo(
     },
     body: JSON.stringify(data),
   });
+  console.log("I made it here2");
+  console.log(res);
 
   if (!res.ok) {
+    console.log("This is trash");
     throw new Error("Failed to update todo list item");
   }
   return res.json();
@@ -57,24 +61,42 @@ const Page = ({ params }: PageProps) => {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { todoId } = use(params);
+  const [todoId, setTodoId] = useState<number | null>(null);
+
+  // Resolve params promise and set todoId
+  useEffect(() => {
+    const fetchTodoId = async () => {
+      try {
+        const resolvedParams = await params;
+        setTodoId(resolvedParams.todoId);
+      } catch (error) {
+        setError("Failed to retrieve todo ID");
+      }
+    };
+    fetchTodoId();
+  }, [params]);
 
   /**
    * Handles form submission.
    * @param {Event} event The form submission event.
    */
   const onFinish = (event: FormEvent<HTMLFormElement>) => {
+    console.log("🛠 Fetching:", todoId, formData);
     event.preventDefault();
     setIsLoading(true);
     setError(null);
-    updateTodo(todoId, formData)
-      .then(() => {
-        router.replace("/?action=update");
-      })
-      .catch(() => {
-        setError("An error occurred");
-        setIsLoading(false);
-      });
+    if (todoId != null) {
+      updateTodo(todoId, formData)
+        .then(() => {
+          console.log("Navigating to: /?action=update");
+          router.replace("/?action=update");
+        })
+        .catch((error) => {
+          console.log(error);
+          setError("An error occurred");
+          setIsLoading(false);
+        });
+    }
   };
 
   // Cleanup effect for resetting loading state
@@ -84,23 +106,25 @@ const Page = ({ params }: PageProps) => {
 
   // Fetch todo list item data on component mount
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await getTodo(todoId);
-        setFormData({
-          title: data.title,
-          description: data.description,
-          completed: data.completed,
-        });
-      } catch (error: any) {
-        setError(error.message);
-      }
-    };
-    fetchData();
+    if (todoId != null) {
+      const fetchData = async () => {
+        try {
+          const data = await getTodo(todoId);
+          setFormData({
+            title: data.title,
+            description: data.description,
+            completed: data.completed,
+          });
+        } catch (error: any) {
+          setError(error.message);
+        }
+      };
+      fetchData();
+    }
   }, [todoId]);
 
   return (
-    <form onSubmit={onFinish}>
+    <form name="update form" onSubmit={onFinish}>
       <div className="form-item">
         <label htmlFor="title">Title</label>
         <input
@@ -138,7 +162,12 @@ const Page = ({ params }: PageProps) => {
       </div>
       {error && <p className="error-message">{error}</p>}
       <div>
-        <button disabled={isLoading} className="add-button" type="submit">
+        <button
+          disabled={isLoading}
+          name="submit"
+          className="add-button"
+          type="submit"
+        >
           Submit
         </button>
       </div>

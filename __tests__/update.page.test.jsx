@@ -1,13 +1,20 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import Page from "../src/app/update/[todoId]/Page";
 import { useRouter } from "next/navigation";
 import { act } from "react";
 import "@testing-library/jest-dom";
 
 jest.mock("next/navigation", () => ({
-  useRouter: jest.fn(),
+  useRouter: jest.fn().mockReturnValue({
+    push: jest.fn(),
+    replace: jest.fn(),
+    pathname: "/",
+    query: {},
+    asPath: "/",
+  }),
 }));
-
+const user = userEvent.setup();
 global.fetch = jest.fn();
 
 describe("Todo Page", () => {
@@ -48,22 +55,46 @@ describe("Todo Page", () => {
     expect(screen.getByDisplayValue("Test Desc")).toBeInTheDocument();
   });
 
-  //   it("handles form submission successfully", async () => {
-  //     fetch.mockResolvedValueOnce({
-  //       ok: true,
-  //       json: async () => ({ title: "Updated Todo", description: "Updated Desc", completed: true }),
-  //     });
+  it("handles form submission successfully", async () => {
+    fetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({
+        title: "Updated Todo",
+        description: "Updated Desc",
+        completed: true,
+      }),
+    });
 
-  //     render(<Page params={Promise.resolve({ todoId: 1 })} />);
+    await act(async () => {
+      render(<Page params={Promise.resolve({ todoId: 1 })} />);
+    });
 
-  //     fireEvent.change(screen.getByLabelText(/title/i), { target: { value: "Updated Todo" } });
-  //     fireEvent.change(screen.getByLabelText(/description/i), { target: { value: "Updated Desc" } });
-  //     fireEvent.click(screen.getByLabelText(/completed/i));
+    await waitFor(() =>
+      expect(screen.getByDisplayValue("Updated Todo")).toBeInTheDocument(),
+    );
+    fetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({
+        title: "Updated Todo",
+        description: "Updated Desc",
+        completed: true,
+      }),
+    });
+    fireEvent.change(screen.getByLabelText(/title/i), {
+      target: { value: "Updated Todo" },
+    });
+    fireEvent.change(screen.getByLabelText(/description/i), {
+      target: { value: "Updated Desc" },
+    });
+    fireEvent.click(screen.getByLabelText(/completed/i));
+    user.click(screen.getByRole("button", { name: /submit/i }));
+    // fireEvent.submit(screen.getByRole("form"));
 
-  //     fireEvent.submit(screen.getByRole("form"));
-
-  //     await waitFor(() => expect(mockRouter.replace).toHaveBeenCalledWith("/?action=update"));
-  //   });
+    await waitFor(() =>
+      expect(mockRouter.replace).toHaveBeenCalledWith("/?action=update"),
+    );
+    console.log("Router calls:", mockRouter.replace.mock.calls);
+  });
 
   //   it("handles API errors gracefully", async () => {
   //     fetch.mockRejectedValueOnce(new Error("Failed to fetch"));
