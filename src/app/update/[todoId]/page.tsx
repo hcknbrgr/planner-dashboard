@@ -77,6 +77,7 @@ const Page = ({ params }: PageProps) => {
    * @param {Event} event The form submission event.
    */
   const onFinish = (event: FormEvent<HTMLFormElement>) => {
+    console.log("submit invoked");
     event.preventDefault();
     setIsLoading(true);
     setError(null);
@@ -90,6 +91,11 @@ const Page = ({ params }: PageProps) => {
           setIsLoading(false);
         });
     }
+  };
+
+  const handleCancel = () => {
+    console.log("Cancel invoked");
+    router.push("/", { scroll: false });
   };
 
   // Cleanup effect for resetting loading state
@@ -162,6 +168,17 @@ const Page = ({ params }: PageProps) => {
           type="submit"
         >
           Submit
+        </button>
+
+        <button
+          type="button"
+          className="cancel-button"
+          onClick={(e) => {
+            e.stopPropagation();
+            handleCancel();
+          }}
+        >
+          Cancel
         </button>
       </div>
     </form>

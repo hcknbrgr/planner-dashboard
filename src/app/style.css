@@ -58,6 +58,13 @@ button {
   margin: 10px;
 }
 
+.cancel-button {
+  background-color: #f00;
+  color: #fff;
+  padding: 10px;
+  margin: 10px;
+}
+
 .delete-button {
   background-color: #f44335;
   color: #fff;
