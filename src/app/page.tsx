@@ -65,6 +65,7 @@ const TodoItem = ({
         >
           Delete
         </button>
+        <button className="decompose-button">!</button>
       </div>
     </div>
   );
