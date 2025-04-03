@@ -160,7 +160,13 @@ const Page = ({ params }: PageProps) => {
         />
       </div>
       {error && <p className="error-message">{error}</p>}
-      <div>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          width: "100%",
+        }}
+      >
         <button
           disabled={isLoading}
           name="submit"
