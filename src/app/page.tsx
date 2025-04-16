@@ -10,6 +10,7 @@ interface TodoItemProps {
   completed: boolean;
   onEdit: (id: number) => void;
   onDelete: (id: number) => void;
+  // onDecompose: (id: number) => void;
 }
 
 interface TodoItemData {
@@ -34,6 +35,18 @@ async function getData() {
     throw new Error("Failed to fetch data");
   }
   return res.json();
+}
+
+async function decomposeTask(id: number): Promise<void> {
+  const res = await fetch(
+    `http://127.0.0.1:8000/api/todos/${id}/generate_subtasks/`,
+    {
+      method: "POST",
+    },
+  );
+  if (!res.ok) {
+    throw new Error("Error on decomposing task");
+  }
 }
 
 const TodoItem = ({
@@ -65,7 +78,9 @@ const TodoItem = ({
         >
           Delete
         </button>
-        <button className="decompose-button">!</button>
+        <button className="decompose-button" onClick={() => decomposeTask(id)}>
+          !
+        </button>
       </div>
     </div>
   );
@@ -140,6 +155,7 @@ export default function Page() {
             description={item.description}
             onEdit={() => router.push(`/update/${item.id}`)}
             onDelete={handleDelete}
+            // onDecompose={decomposeTask}
           />
         ))
       ) : (
