@@ -20,7 +20,7 @@ interface TodoItemData {
   completed: boolean;
 }
 
-async function deleteMenu(id: number): Promise<void> {
+async function deleteItem(id: number): Promise<void> {
   const res = await fetch(`http://127.0.0.1:8000/api/todos/${id}/`, {
     method: "DELETE",
   });
@@ -73,7 +73,7 @@ const TodoItem = ({
         <button
           className="delete-button"
           onClick={() => {
-            deleteMenu(id).then(() => onDelete(id));
+            deleteItem(id).then(() => onDelete(id));
           }}
         >
           Delete
@@ -87,7 +87,7 @@ const TodoItem = ({
 };
 
 export default function Page() {
-  const [todoItems, setMenuItems] = useState<TodoItemData[] | null>(null);
+  const [todoItems, setTodoItems] = useState<TodoItemData[] | null>(null);
   const router = useRouter();
   const params = useSearchParams();
 
@@ -97,11 +97,11 @@ export default function Page() {
     type: "", // either 'add' or 'update'
   });
 
-  // Fetch menu items on component mount
+  // Fetch todo items on component mount
   useEffect(() => {
     const fetchData = async () => {
       const data = await getData();
-      setMenuItems(data);
+      setTodoItems(data);
     };
     fetchData().catch(console.error);
   }, []);
@@ -129,9 +129,9 @@ export default function Page() {
     return () => clearTimeout(timer);
   }, [displaySuccessMessage.show]);
 
-  // Handle deletion of a menu item
+  // Handle deletion of a todo list item
   const handleDelete = (id: number) => {
-    setMenuItems((items) => items?.filter((item) => item.id !== id) ?? null);
+    setTodoItems((items) => items?.filter((item) => item.id !== id) ?? null);
   };
 
   return (
@@ -141,8 +141,8 @@ export default function Page() {
       </button>
       {displaySuccessMessage.show && (
         <p className="success-message">
-          {displaySuccessMessage.type === "add" ? "Added a" : "Modified a"} menu
-          item.
+          {displaySuccessMessage.type === "add" ? "Added a" : "Modified a"} todo
+          list item.
         </p>
       )}
       {todoItems ? (
@@ -155,7 +155,6 @@ export default function Page() {
             description={item.description}
             onEdit={() => router.push(`/update/${item.id}`)}
             onDelete={handleDelete}
-            // onDecompose={decomposeTask}
           />
         ))
       ) : (

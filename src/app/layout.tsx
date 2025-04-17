@@ -17,7 +17,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en">
       <body className={inter.className}>
-        <main className="menu-container">{children}</main>
+        <main className="todolist-container">{children}</main>
       </body>
     </html>
   );
