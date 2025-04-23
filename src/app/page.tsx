@@ -10,12 +10,26 @@ interface TodoItemProps {
   completed: boolean;
   onEdit: (id: number) => void;
   onDelete: (id: number) => void;
-  // onDecompose: (id: number) => void;
+}
+interface SubtaskItemProps {
+  id: number;
+  todo: number;
+  step: number;
+  description: string;
+  completed: boolean;
 }
 
 interface TodoItemData {
   id: number;
   title: string;
+  description: string;
+  completed: boolean;
+}
+
+interface SubtaskItemData {
+  id: number;
+  todo: number;
+  step: number;
   description: string;
   completed: boolean;
 }
@@ -29,10 +43,18 @@ async function deleteItem(id: number): Promise<void> {
   }
 }
 
-async function getData() {
+async function getTodoData() {
   const res = await fetch("http://127.0.0.1:8000/api/todos/");
   if (!res.ok) {
     throw new Error("Failed to fetch data");
+  }
+  return res.json();
+}
+
+async function getSubtaskData() {
+  const res = await fetch(`http://127.0.0.1:8000/api/subtasks/`);
+  if (!res.ok) {
+    throw new Error("Failed to fetch subtask data");
   }
   return res.json();
 }
@@ -48,6 +70,27 @@ async function decomposeTask(id: number): Promise<void> {
     throw new Error("Error on decomposing task");
   }
 }
+
+const SubtaskItem = ({
+  id,
+  todo,
+  step,
+  description,
+  completed,
+}: SubtaskItemProps) => {
+  return (
+    <div className="subtask-item">
+      <div className="subtask-item-info">
+        <div className="subtask-item-todoId">Todo Id: {todo}</div>
+        <div className="subtask-item-step">Step: {step}</div>
+        <div className="subtask-item-description">{description}</div>
+        <div className="subtask-item-completed">
+          Completed: {completed ? "Yes" : "No"}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const TodoItem = ({
   id,
@@ -88,6 +131,9 @@ const TodoItem = ({
 
 export default function Page() {
   const [todoItems, setTodoItems] = useState<TodoItemData[] | null>(null);
+  const [subtaskItems, setSubtaskItems] = useState<SubtaskItemData[] | null>(
+    null,
+  );
   const router = useRouter();
   const params = useSearchParams();
 
@@ -100,10 +146,19 @@ export default function Page() {
   // Fetch todo items on component mount
   useEffect(() => {
     const fetchData = async () => {
-      const data = await getData();
+      const data = await getTodoData();
       setTodoItems(data);
     };
     fetchData().catch(console.error);
+  }, []);
+
+  // Fetch subtask items on component mount
+  useEffect(() => {
+    const fetchSubtaskData = async () => {
+      const subtaskData = await getSubtaskData();
+      setSubtaskItems(subtaskData);
+    };
+    fetchSubtaskData().catch(console.error);
   }, []);
 
   // Detect changes in URL parameters for success messages
@@ -159,6 +214,20 @@ export default function Page() {
         ))
       ) : (
         <p>Loading...</p>
+      )}
+      {subtaskItems ? (
+        subtaskItems.map((subtask) => (
+          <SubtaskItem
+            key={subtask.id}
+            id={subtask.id}
+            todo={subtask.todo}
+            step={subtask.step}
+            description={subtask.description}
+            completed={subtask.completed}
+          />
+        ))
+      ) : (
+        <p>Subtasks Loading...</p>
       )}
     </div>
   );
