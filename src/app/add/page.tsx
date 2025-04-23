@@ -69,6 +69,7 @@ const Page = () => {
         <label htmlFor="title">Title</label>
         <input
           required
+          id="title"
           name="title"
           value={formData.title}
           onChange={(event) =>
@@ -80,6 +81,7 @@ const Page = () => {
         <label htmlFor="description">Description</label>
         <input
           required
+          id="description"
           name="description"
           value={formData.description}
           onChange={(event) =>

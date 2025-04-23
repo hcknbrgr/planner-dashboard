@@ -11,6 +11,13 @@ interface TodoItemProps {
   onEdit: (id: number) => void;
   onDelete: (id: number) => void;
 }
+interface SubtaskItemProps {
+  id: number;
+  todo: number;
+  step: number;
+  description: string;
+  completed: boolean;
+}
 
 interface TodoItemData {
   id: number;
@@ -19,7 +26,15 @@ interface TodoItemData {
   completed: boolean;
 }
 
-async function deleteMenu(id: number): Promise<void> {
+interface SubtaskItemData {
+  id: number;
+  todo: number;
+  step: number;
+  description: string;
+  completed: boolean;
+}
+
+async function deleteItem(id: number): Promise<void> {
   const res = await fetch(`http://127.0.0.1:8000/api/todos/${id}/`, {
     method: "DELETE",
   });
@@ -28,13 +43,54 @@ async function deleteMenu(id: number): Promise<void> {
   }
 }
 
-async function getData() {
+async function getTodoData() {
   const res = await fetch("http://127.0.0.1:8000/api/todos/");
   if (!res.ok) {
     throw new Error("Failed to fetch data");
   }
   return res.json();
 }
+
+async function getSubtaskData() {
+  const res = await fetch(`http://127.0.0.1:8000/api/subtasks/`);
+  if (!res.ok) {
+    throw new Error("Failed to fetch subtask data");
+  }
+  return res.json();
+}
+
+async function decomposeTask(id: number): Promise<void> {
+  const res = await fetch(
+    `http://127.0.0.1:8000/api/todos/${id}/generate_subtasks/`,
+    {
+      method: "POST",
+    },
+  );
+  if (!res.ok) {
+    throw new Error("Error on decomposing task");
+  }
+}
+
+const SubtaskItem = ({
+  id,
+  todo,
+  step,
+  description,
+  completed,
+}: SubtaskItemProps) => {
+  return (
+    <div className="subtask-item">
+      <div className="subtask-item-info">
+        <div className="subtask-item-todoId">Todo Id: {todo}</div>
+        <div className="subtask-item-step">Step: {step}</div>
+        <div className="subtask-item-description">{description}</div>
+        <div className="subtask-item-completed">
+          Completed: {completed ? "Yes" : "No"}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const TodoItem = ({
   id,
@@ -60,10 +116,13 @@ const TodoItem = ({
         <button
           className="delete-button"
           onClick={() => {
-            deleteMenu(id).then(() => onDelete(id));
+            deleteItem(id).then(() => onDelete(id));
           }}
         >
           Delete
+        </button>
+        <button className="decompose-button" onClick={() => decomposeTask(id)}>
+          !
         </button>
       </div>
     </div>
@@ -71,7 +130,10 @@ const TodoItem = ({
 };
 
 export default function Page() {
-  const [todoItems, setMenuItems] = useState<TodoItemData[] | null>(null);
+  const [todoItems, setTodoItems] = useState<TodoItemData[] | null>(null);
+  const [subtaskItems, setSubtaskItems] = useState<SubtaskItemData[] | null>(
+    null,
+  );
   const router = useRouter();
   const params = useSearchParams();
 
@@ -81,13 +143,22 @@ export default function Page() {
     type: "", // either 'add' or 'update'
   });
 
-  // Fetch menu items on component mount
+  // Fetch todo items on component mount
   useEffect(() => {
     const fetchData = async () => {
-      const data = await getData();
-      setMenuItems(data);
+      const data = await getTodoData();
+      setTodoItems(data);
     };
     fetchData().catch(console.error);
+  }, []);
+
+  // Fetch subtask items on component mount
+  useEffect(() => {
+    const fetchSubtaskData = async () => {
+      const subtaskData = await getSubtaskData();
+      setSubtaskItems(subtaskData);
+    };
+    fetchSubtaskData().catch(console.error);
   }, []);
 
   // Detect changes in URL parameters for success messages
@@ -113,9 +184,9 @@ export default function Page() {
     return () => clearTimeout(timer);
   }, [displaySuccessMessage.show]);
 
-  // Handle deletion of a menu item
+  // Handle deletion of a todo list item
   const handleDelete = (id: number) => {
-    setMenuItems((items) => items?.filter((item) => item.id !== id) ?? null);
+    setTodoItems((items) => items?.filter((item) => item.id !== id) ?? null);
   };
 
   return (
@@ -125,8 +196,8 @@ export default function Page() {
       </button>
       {displaySuccessMessage.show && (
         <p className="success-message">
-          {displaySuccessMessage.type === "add" ? "Added a" : "Modified a"} menu
-          item.
+          {displaySuccessMessage.type === "add" ? "Added a" : "Modified a"} todo
+          list item.
         </p>
       )}
       {todoItems ? (
@@ -143,6 +214,20 @@ export default function Page() {
         ))
       ) : (
         <p>Loading...</p>
+      )}
+      {subtaskItems ? (
+        subtaskItems.map((subtask) => (
+          <SubtaskItem
+            key={subtask.id}
+            id={subtask.id}
+            todo={subtask.todo}
+            step={subtask.step}
+            description={subtask.description}
+            completed={subtask.completed}
+          />
+        ))
+      ) : (
+        <p>Subtasks Loading...</p>
       )}
     </div>
   );

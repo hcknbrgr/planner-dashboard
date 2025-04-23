@@ -1,4 +1,4 @@
-.menu-container {
+.todolist-container {
   max-width: 70%;
   height: 90vh;
   margin: 0 auto;
@@ -68,6 +68,11 @@ button {
 .delete-button {
   background-color: #f44335;
   color: #fff;
+}
+
+.decompose-button {
+  background-color: #000;
+  color: #bf0;
 }
 
 form {
