@@ -39,6 +39,36 @@
   gap: 10px;
 }
 
+.subtask-item {
+  border: 2px solid #ddd;
+  padding-left: 20px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  margin-left: 30px;
+  margin-top: 10px;
+  margin-right: 10px;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #fff;
+}
+
+.subtask-item-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.subtask-item-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.subtask-item-description {
+  color: #555;
+}
+
 button {
   padding: 5px 10px;
   border: none;

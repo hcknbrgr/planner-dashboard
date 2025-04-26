@@ -81,7 +81,7 @@ const SubtaskItem = ({
   return (
     <div className="subtask-item">
       <div className="subtask-item-info">
-        <div className="subtask-item-todoId">Todo Id: {todo}</div>
+        {/* <div className="subtask-item-todoId">Todo Id: {todo}</div> */}
         <div className="subtask-item-step">Step: {step}</div>
         <div className="subtask-item-description">{description}</div>
         <div className="subtask-item-completed">
@@ -202,32 +202,35 @@ export default function Page() {
       )}
       {todoItems ? (
         todoItems.map((item) => (
-          <TodoItem
-            key={item.id}
-            id={item.id}
-            title={item.title}
-            completed={item.completed}
-            description={item.description}
-            onEdit={() => router.push(`/update/${item.id}`)}
-            onDelete={handleDelete}
-          />
+          <div>
+            <TodoItem
+              key={item.id}
+              id={item.id}
+              title={item.title}
+              completed={item.completed}
+              description={item.description}
+              onEdit={() => router.push(`/update/${item.id}`)}
+              onDelete={handleDelete}
+            />
+            <div className="subtask-list">
+              {subtaskItems
+                ?.filter((sub) => sub.todo === item.id)
+                .sort((a, b) => a.step - b.step)
+                .map((subtask) => (
+                  <SubtaskItem
+                    key={subtask.id}
+                    id={subtask.id}
+                    todo={subtask.todo}
+                    step={subtask.step}
+                    description={subtask.description}
+                    completed={subtask.completed}
+                  />
+                ))}
+            </div>
+          </div>
         ))
       ) : (
         <p>Loading...</p>
-      )}
-      {subtaskItems ? (
-        subtaskItems.map((subtask) => (
-          <SubtaskItem
-            key={subtask.id}
-            id={subtask.id}
-            todo={subtask.todo}
-            step={subtask.step}
-            description={subtask.description}
-            completed={subtask.completed}
-          />
-        ))
-      ) : (
-        <p>Subtasks Loading...</p>
       )}
     </div>
   );
