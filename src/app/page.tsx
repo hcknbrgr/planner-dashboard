@@ -121,6 +121,7 @@ const TodoItem = ({
         >
           Delete
         </button>
+
         <button className="decompose-button" onClick={() => decomposeTask(id)}>
           !
         </button>
@@ -187,6 +188,10 @@ export default function Page() {
   // Handle deletion of a todo list item
   const handleDelete = (id: number) => {
     setTodoItems((items) => items?.filter((item) => item.id !== id) ?? null);
+  };
+
+  const hasSubtasks = (id: number) => {
+    subtaskItems?.some((sub) => sub.todo === id);
   };
 
   return (
