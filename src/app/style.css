@@ -105,6 +105,11 @@ button {
   color: #bf0;
 }
 
+.expand-button {
+  background-color: #555;
+  color: #000;
+}
+
 form {
   width: 60%;
 }

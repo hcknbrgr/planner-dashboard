@@ -125,6 +125,7 @@ const TodoItem = ({
         <button className="decompose-button" onClick={() => decomposeTask(id)}>
           !
         </button>
+        <button className="expand-button">+</button>
       </div>
     </div>
   );
@@ -190,10 +191,6 @@ export default function Page() {
     setTodoItems((items) => items?.filter((item) => item.id !== id) ?? null);
   };
 
-  const hasSubtasks = (id: number) => {
-    subtaskItems?.some((sub) => sub.todo === id);
-  };
-
   return (
     <div>
       <button className="add-button" onClick={() => router.push("/add")}>
@@ -207,7 +204,7 @@ export default function Page() {
       )}
       {todoItems ? (
         todoItems.map((item) => (
-          <div>
+          <div key={`item-${item.id}`}>
             <TodoItem
               key={item.id}
               id={item.id}
