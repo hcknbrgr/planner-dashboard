@@ -17,6 +17,7 @@ interface SubtaskItemProps {
   step: number;
   description: string;
   completed: boolean;
+  onEdit: (id: number) => void;
 }
 
 interface TodoItemData {
@@ -77,6 +78,7 @@ const SubtaskItem = ({
   step,
   description,
   completed,
+  onEdit,
 }: SubtaskItemProps) => {
   return (
     <div className="subtask-item">
@@ -87,6 +89,11 @@ const SubtaskItem = ({
         <div className="subtask-item-completed">
           Completed: {completed ? "Yes" : "No"}
         </div>
+      </div>
+      <div className="subtask-item-actions">
+        <button className="edit-button" onClick={() => onEdit(id)}>
+          Edit
+        </button>
       </div>
     </div>
   );
@@ -226,6 +233,7 @@ export default function Page() {
                     step={subtask.step}
                     description={subtask.description}
                     completed={subtask.completed}
+                    onEdit={(id) => router.push(`/update/subtask/${id}`)}
                   />
                 ))}
             </div>
